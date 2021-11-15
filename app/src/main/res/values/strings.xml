@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Co-green</string>
+
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="logout">Logout</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login_title">LOGIN</string>
+    <string name="create_new_account">Create new account</string>
 </resources>
