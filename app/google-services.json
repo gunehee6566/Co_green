@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "857266331458",
+    "firebase_url": "https://cogreen-b3435-default-rtdb.firebaseio.com",
+    "project_id": "cogreen-b3435",
+    "storage_bucket": "cogreen-b3435.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857266331458:android:fac9a848beaff2a43cb2db",
+        "android_client_info": {
+          "package_name": "ca.bcit.co_green"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "857266331458-3tjamm760g65a7j7df26njei3fbcdjb3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGeKbyfjzt-3g8m-nObbdspPl3ZyvyIhE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "857266331458-3tjamm760g65a7j7df26njei3fbcdjb3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
