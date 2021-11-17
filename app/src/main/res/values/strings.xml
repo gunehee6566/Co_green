@@ -8,4 +8,13 @@
     <string name="password">Password</string>
     <string name="login_title">LOGIN</string>
     <string name="create_new_account">Create new account</string>
+
+    <!--input page-->
+    <string name="transport_drive_distance">Driven distance</string>
+    <string name="transport_drive_unit">KM</string>
+    <string name="lifestyle_electricity">Electricity used</string>
+    <string name="lifestyle_electricity_unit">KWH</string>
+
+
+    <string name="TOKEN">GAPCRCRTCF4RVRMT6K9W1YMK226K</string>
 </resources>
