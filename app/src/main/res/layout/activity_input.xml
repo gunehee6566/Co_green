@@ -21,8 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_row="0"
         android:layout_column="1"
-        android:ems="10"
-        android:inputType="textPersonName"/>
+        android:ems="10"/>
 
     <TextView
         android:id="@+id/lblDriveDistanceUnit"
@@ -40,9 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_row="1"
         android:layout_column="1"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name" />
+        android:ems="10"/>
 
     <TextView
         android:id="@+id/edtElecUsed"
@@ -50,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_row="1"
         android:layout_column="0"
-        android:text="TextView" />
+        android:text="@string/lifestyle_electricity" />
 
     <TextView
         android:id="@+id/lblElecUnit"
@@ -58,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_row="1"
         android:layout_column="2"
-        android:text="TextView" />
+        android:text="@string/lifestyle_electricity_unit" />
 
     <Button
         android:id="@+id/button"
@@ -70,7 +67,7 @@
         android:onClick="calculateEmission"/>
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/txtResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="3"
