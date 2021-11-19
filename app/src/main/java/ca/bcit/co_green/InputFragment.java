@@ -2,7 +2,10 @@ package ca.bcit.co_green;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,8 +40,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import ca.bcit.co_green.ranking.RankingRecyclerAdapter;
 
 public class InputFragment extends Fragment {
     EditText edtDriveDistance;
@@ -49,44 +55,53 @@ public class InputFragment extends Fragment {
     private static final String EMISSION_URL = "https://beta2.api.climatiq.io/estimate";
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        databaseInput = FirebaseDatabase.getInstance().getReference("ranking");
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        edtDriveDistance = view.findViewById(R.id.edtDriveDistance);
+        edtElecUsed = view.findViewById(R.id.edtElecUsed);
+        button = view.findViewById(R.id.button);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_input, container, false);
         Button button = (Button) view.findViewById(R.id.btnSaveInput);
-        button.setOnClickListener(new View.OnClickListener()
-        {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 calculateEmission();
+                addInput();
             }
         });
+
         return view;
     }
 
-    private void addInput(){
+    private void addInput() {
         String driveDistance = edtDriveDistance.getText().toString().trim();
         String electUsed = edtElecUsed.getText().toString().trim();
 
-        if(TextUtils.isEmpty(driveDistance)){
+        if (TextUtils.isEmpty(driveDistance)) {
             Toast.makeText(getActivity(), "Must enter some value.", Toast.LENGTH_LONG).show();
         }
 
-        if(TextUtils.isEmpty(electUsed)){
+        if (TextUtils.isEmpty(electUsed)) {
             Toast.makeText(getActivity(), "Must enter some value.", Toast.LENGTH_LONG).show();
         }
 
         String id = databaseInput.push().getKey();
         String userId = user.getUid();
-        CO2 co2 = new CO2(userId,driveDistance,electUsed);
+        CO2 co2 = new CO2(userId, driveDistance, electUsed);
 
         Task setValueTask = databaseInput.child(id).setValue(co2);
 
         setValueTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
-                Toast.makeText(getActivity(),"co2 input added.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "co2 input added.", Toast.LENGTH_LONG).show();
                 edtDriveDistance.setText("");
                 edtElecUsed.setText("");
             }
@@ -109,7 +124,7 @@ public class InputFragment extends Fragment {
             JSONObject postDataPAram = new JSONObject();
             postDataPAram.put("volume", distanceDriven);
             postDataPAram.put("volume_unit", "l");
-            postData.put("parameters",postDataPAram);
+            postData.put("parameters", postDataPAram);
 
             callAPI(postData);
 
@@ -118,13 +133,13 @@ public class InputFragment extends Fragment {
         }
     }
 
-    public void callAPI(JSONObject postJsonObj){
+    public void callAPI(JSONObject postJsonObj) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
             String URL = EMISSION_URL;
             JSONObject jsonBody = postJsonObj;
 
-            final String token = "bearer " +getResources().getString(R.string.TOKEN);
+            final String token = "bearer " + getResources().getString(R.string.TOKEN);
             final String requestBody = jsonBody.toString();
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -181,7 +196,7 @@ public class InputFragment extends Fragment {
 
     }
 
-    public void handleSuccessResult(String response){
+    public void handleSuccessResult(String response) {
         // Parse response
         Gson gson = new Gson();
         JsonObject convertedObject = gson.fromJson(response, JsonObject.class);
