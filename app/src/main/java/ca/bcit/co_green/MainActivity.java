@@ -20,15 +20,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
     }
 
     public void goToInput(View view) {
-
-        Intent k = new Intent(this, InputActivity.class);
-        startActivity(k);
+        Intent t = new Intent(this, RegisterActivity.class);
+        startActivity(t);
+//        Intent k = new Intent(this, InputActivity.class);
+//        startActivity(k);
     }
 
 

@@ -18,6 +18,14 @@
         android:text="@string/create_new_account" />
 
     <EditText
+        android:id="@+id/editName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:hint="@string/name"
+        android:inputType="textPersonName" />
+
+    <EditText
         android:id="@+id/editEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
