@@ -1,11 +1,14 @@
 package ca.bcit.co_green;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -37,7 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InputActivity extends AppCompatActivity {
+public class InputFragment extends Fragment {
     EditText edtDriveDistance;
     EditText edtElecUsed;
     Button button;
@@ -46,27 +49,20 @@ public class InputActivity extends AppCompatActivity {
     private static final String EMISSION_URL = "https://beta2.api.climatiq.io/estimate";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_input);
-
-        databaseInput = FirebaseDatabase.getInstance().getReference("ranking");
-
-        edtDriveDistance = findViewById(R.id.edtDriveDistance);
-        edtElecUsed = findViewById(R.id.edtElecUsed);
-        button = findViewById(R.id.button);
-
-        button.setOnClickListener(new View.OnClickListener() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_input, container, false);
+        Button button = (Button) view.findViewById(R.id.btnSaveInput);
+        button.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                addInput();
+            public void onClick(View v)
+            {
+                calculateEmission();
             }
         });
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            finish();
-        }
+        return view;
     }
 
     private void addInput(){
@@ -74,10 +70,11 @@ public class InputActivity extends AppCompatActivity {
         String electUsed = edtElecUsed.getText().toString().trim();
 
         if(TextUtils.isEmpty(driveDistance)){
-            Toast.makeText(this, "Must enter some value.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Must enter some value.", Toast.LENGTH_LONG).show();
         }
+
         if(TextUtils.isEmpty(electUsed)){
-            Toast.makeText(this, "Must enter some value.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Must enter some value.", Toast.LENGTH_LONG).show();
         }
 
         String id = databaseInput.push().getKey();
@@ -89,17 +86,18 @@ public class InputActivity extends AppCompatActivity {
         setValueTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
-                Toast.makeText(InputActivity.this,"co2 input added.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),"co2 input added.",Toast.LENGTH_LONG).show();
                 edtDriveDistance.setText("");
                 edtElecUsed.setText("");
             }
         });
     }
 
-    public void calculateEmission(View view) {
+    public void calculateEmission() {
         // Get values
-        TextView distanceDrivenTV = findViewById(R.id.edtDriveDistance);
+        TextView distanceDrivenTV = getView().findViewById(R.id.edtDriveDistance);
         String distanceDrivenStr = distanceDrivenTV.getText().toString();
+        if (distanceDrivenStr.isEmpty()) distanceDrivenStr = "0";
 
         // Convert to body value
         double distanceDriven = Double.parseDouble(distanceDrivenStr);
@@ -122,7 +120,7 @@ public class InputActivity extends AppCompatActivity {
 
     public void callAPI(JSONObject postJsonObj){
         try {
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
             String URL = EMISSION_URL;
             JSONObject jsonBody = postJsonObj;
 
@@ -190,7 +188,7 @@ public class InputActivity extends AppCompatActivity {
         String result = convertedObject.get("co2e").getAsString();
 
         // Display CO2 result as text
-        TextView resultText = findViewById(R.id.txtResult);
+        TextView resultText = getActivity().findViewById(R.id.txtResult);
         resultText.setText(result);
     }
 
