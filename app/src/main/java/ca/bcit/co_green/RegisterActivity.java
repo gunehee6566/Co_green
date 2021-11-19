@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -84,15 +85,16 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            addUserName(task.getResult().getUser().getUid());
                             Toast.makeText(RegisterActivity.this, "User Created", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
                         } else {
                             Toast.makeText(RegisterActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                         }
                     }
                 });
-                addUserName();
             }
 
         });
@@ -107,18 +109,13 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     }
-    private void addUserName(){
+    private void addUserName(String id){
         String userName = editName.getText().toString().trim();
-
-
         if(TextUtils.isEmpty(userName)){
             Toast.makeText(this, "Must enter some value.", Toast.LENGTH_LONG).show();
         }
 
-
-        String id = databaseInput.push().getKey();
         User user = new User(id,userName);
-
         Task setValueTask = databaseInput.child(id).setValue(user);
 
         setValueTask.addOnSuccessListener(new OnSuccessListener() {

@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RankingFragment">
+    tools:context=".ranking.RankingFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="THIS IS RANKING FRAGMENT" />
+        android:layout_height="wrap_content"
+        android:id="@+id/rank_recycler"/>
 
 </FrameLayout>

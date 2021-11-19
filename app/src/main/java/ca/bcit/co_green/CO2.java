@@ -4,6 +4,7 @@ public class CO2 {
     String id;
     String driveDistance;
     String elecUsed;
+    float co2;
 
     public CO2(){};
     public CO2(String id, String driveDistance, String elecUsed){
@@ -30,4 +31,12 @@ public class CO2 {
         this.elecUsed = elecUsed;
     }
 
+    public float getCo2() {
+        //return co2;
+        return Float.parseFloat(driveDistance) + Float.parseFloat(elecUsed);
+    }
+
+    public void setCo2(float co2) {
+        this.co2 = co2;
+    }
 }
