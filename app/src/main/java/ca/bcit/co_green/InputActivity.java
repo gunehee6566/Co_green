@@ -3,9 +3,13 @@ package ca.bcit.co_green;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -17,6 +21,10 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -28,13 +36,56 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InputActivity extends AppCompatActivity {
+    EditText edtDriveDistance;
+    EditText edtElecUsed;
+    Button button;
 
+    DatabaseReference databaseInput;
     private static final String EMISSION_URL = "https://beta2.api.climatiq.io/estimate";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
+
+        databaseInput = FirebaseDatabase.getInstance().getReference("ranking");
+
+        edtDriveDistance = findViewById(R.id.edtDriveDistance);
+        edtElecUsed = findViewById(R.id.edtElecUsed);
+        button = findViewById(R.id.button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addInput();
+            }
+        });
+    }
+
+    private void addInput(){
+        String driveDistance = edtDriveDistance.getText().toString().trim();
+        String electUsed = edtElecUsed.getText().toString().trim();
+
+        if(TextUtils.isEmpty(driveDistance)){
+            Toast.makeText(this, "Must enter some value.", Toast.LENGTH_LONG).show();
+        }
+        if(TextUtils.isEmpty(electUsed)){
+            Toast.makeText(this, "Must enter some value.", Toast.LENGTH_LONG).show();
+        }
+
+        String id = databaseInput.push().getKey();
+        CO2 co2 = new CO2(id,driveDistance,electUsed);
+
+        Task setValueTask = databaseInput.child(id).setValue(co2);
+
+        setValueTask.addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                Toast.makeText(InputActivity.this,"co2 input added.",Toast.LENGTH_LONG).show();
+                edtDriveDistance.setText("");
+                edtElecUsed.setText("");
+            }
+        });
     }
 
     public void calculateEmission(View view) {
