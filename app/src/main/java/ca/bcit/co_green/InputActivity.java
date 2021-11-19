@@ -23,6 +23,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
@@ -39,8 +41,8 @@ public class InputActivity extends AppCompatActivity {
     EditText edtDriveDistance;
     EditText edtElecUsed;
     Button button;
-
     DatabaseReference databaseInput;
+    FirebaseUser user;
     private static final String EMISSION_URL = "https://beta2.api.climatiq.io/estimate";
 
     @Override
@@ -60,6 +62,11 @@ public class InputActivity extends AppCompatActivity {
                 addInput();
             }
         });
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            finish();
+        }
     }
 
     private void addInput(){
@@ -74,7 +81,8 @@ public class InputActivity extends AppCompatActivity {
         }
 
         String id = databaseInput.push().getKey();
-        CO2 co2 = new CO2(id,driveDistance,electUsed);
+        String userId = user.getUid();
+        CO2 co2 = new CO2(userId,driveDistance,electUsed);
 
         Task setValueTask = databaseInput.child(id).setValue(co2);
 

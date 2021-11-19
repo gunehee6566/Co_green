@@ -21,7 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_row="0"
         android:layout_column="1"
-        android:ems="10"/>
+        android:ems="10"
+        android:inputType="number"/>
 
     <TextView
         android:id="@+id/lblDriveDistanceUnit"
@@ -45,9 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_row="1"
         android:layout_column="1"
-        android:ems="10"/>
-
-
+        android:ems="10"
+        android:inputType="number"/>
 
     <TextView
         android:id="@+id/lblElecUnit"
@@ -73,4 +73,5 @@
         android:layout_row="3"
         android:layout_column="2"
         android:text="TextView" />
+
 </GridLayout>
