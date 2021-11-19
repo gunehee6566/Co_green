@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
                         manager.beginTransaction().replace(R.id.frame, new HomeFragment()).commit();
                         return true;
                     case R.id.page_add:
-                        i = new Intent(getApplicationContext(), InputActivity.class);
-                        startActivity(i);
+                        manager.beginTransaction().replace(R.id.frame, new InputFragment()).commit();
                         return true;
                     case R.id.page_rank:
                         manager.beginTransaction().replace(R.id.frame, new RankingFragment()).commit();

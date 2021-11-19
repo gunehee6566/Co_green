@@ -5,9 +5,8 @@
       <map>
         <entry key="..\:/CST/COMP_3717_AND/Co_green/app/src/main/res/layout/activity_input.xml" value="0.1" />
         <entry key="..\:/CST/COMP_3717_AND/Co_green/app/src/main/res/layout/activity_main.xml" value="0.21770833333333334" />
-        <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/activity_input.xml" value="0.21851851851851853" />
-        <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/activity_main.xml" value="0.9554655870445344" />
-        <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/activity_register.xml" value="0.41852487135506006" />
+        <entry key="..\:/CST/COMP_3717_AND/Co_green/app/src/main/res/layout/fragment_input.xml" value="0.20416666666666666" />
+        <entry key="..\:/CST/COMP_3717_AND/Co_green/app/src/main/res/layout/fragment_ranking.xml" value="0.1875" />
       </map>
     </option>
   </component>

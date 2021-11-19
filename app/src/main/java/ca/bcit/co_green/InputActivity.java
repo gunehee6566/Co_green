@@ -183,7 +183,6 @@ public class InputActivity extends AppCompatActivity {
 
     }
 
-
     public void handleSuccessResult(String response){
         // Parse response
         Gson gson = new Gson();
