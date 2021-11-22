@@ -1,18 +1,138 @@
 package ca.bcit.co_green;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class HomeFragment extends Fragment {
+    private PieChart pieChart;
+    private FirebaseAuth fAuth;
+    private TextView nameText;
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        pieChart = view.findViewById(R.id.home_pieChart);
+        fAuth = FirebaseAuth.getInstance();
+        nameText = view.findViewById(R.id.home_username);
+        getMyInfo((userName)->{
+            nameText.setText(userName);
+        });
+        getMyReports((reports)->{
+            Log.d("size", "" + reports.size());
+            Log.d("last", reports.get(reports.size()-1).getDriveDistance());
+
+            Map<String, Integer> typeAmountMap = new HashMap<>();
+            for(CO2 report : reports) {
+                typeAmountMap.put("Electricity", typeAmountMap.get("Electricity") == null?0:typeAmountMap.get("Electricity") + Integer.parseInt(report.elecUsed));
+                typeAmountMap.put("Drive", typeAmountMap.get("Drive") == null?0:typeAmountMap.get("Drive") + Integer.parseInt(report.driveDistance));
+            }
+            initPieChart();
+            showPieChart(typeAmountMap);
+        });
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    private void showPieChart(Map<String, Integer> data){
+
+        ArrayList<PieEntry> pieEntries = new ArrayList<>();
+        String label = "type";
+
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(Color.parseColor("#9F43CC"));
+        colors.add(Color.parseColor("#EBA10F"));
+        colors.add(Color.parseColor("#2B87E3"));
+        colors.add(Color.parseColor("#0CA85D"));
+
+        for(String type: data.keySet()){
+            pieEntries.add(new PieEntry(data.get(type).floatValue(), type));
+        }
+
+        PieDataSet pieDataSet = new PieDataSet(pieEntries,label);
+        pieDataSet.setValueTextSize(15f);
+        pieDataSet.setColors(colors);
+        PieData pieData = new PieData(pieDataSet);
+        pieData.setDrawValues(true);
+
+        pieChart.setData(pieData);
+        pieChart.invalidate();
+    }
+
+    private void initPieChart(){
+        pieChart.setUsePercentValues(true);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setRotationEnabled(true);
+        pieChart.setDragDecelerationFrictionCoef(0.9f);
+        pieChart.setRotationAngle(0);
+        pieChart.setHighlightPerTapEnabled(true);
+    }
+
+    private void getMyReports(Consumer<ArrayList<CO2>> onFinish) {
+        FirebaseUser user = fAuth.getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("ranking");
+        myRef.orderByChild("id").equalTo(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()) {
+                    ArrayList<CO2> reports = new ArrayList<>();
+                    task.getResult().getChildren().forEach(child->{
+                        reports.add(child.getValue(CO2.class));
+                    });
+                    onFinish.accept(reports);
+                } else {
+                    onFinish.accept(null);
+                }
+            }
+        });
+    }
+
+    private void getMyInfo(Consumer<String> onFinish) {
+        FirebaseUser user = fAuth.getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("user");
+        myRef.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()) {
+                    onFinish.accept(String.valueOf(task.getResult().child("name").getValue()));
+                } else {
+                    onFinish.accept(null);
+                }
+            }
+        });
     }
 }
