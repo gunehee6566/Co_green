@@ -1,6 +1,10 @@
 package ca.bcit.co_green;
 
+import android.webkit.HttpAuthHandler;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CO2 {
     String id;
@@ -8,6 +12,9 @@ public class CO2 {
     String elecUsed;
     Date timestamp;
     float co2;
+    Map<String, String> co2Dictionary = new HashMap<>();
+
+
 
     public CO2(){};
     public CO2(String id, String driveDistance, String elecUsed){
@@ -19,26 +26,25 @@ public class CO2 {
     public String getId(){
         return id;
     }
-    public void setId(){
-        this.id = id;
-    }
+    public void setId(String id){this.id = id;}
+
     public String getDriveDistance(){
         return driveDistance;
     }
-    public void setDriveDistance(){
+    public void setDriveDistance(String driveDistance){
         this.driveDistance = driveDistance;
     }
+
     public String getElecUsed(){
         return elecUsed;
     }
-    public void setElecUsed(){
+    public void setElecUsed(String elecUsed){
         this.elecUsed = elecUsed;
     }
 
     public Date getTimestamp() {
         return timestamp;
     }
-
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
@@ -50,5 +56,13 @@ public class CO2 {
 
     public void setCo2(float co2) {
         this.co2 = co2;
+    }
+
+    public Map<String, String> getCo2Dictionary() {
+        return co2Dictionary;
+    }
+
+    public void setCo2Dictionary(Map<String, String> co2Dictionary) {
+        this.co2Dictionary = co2Dictionary;
     }
 }

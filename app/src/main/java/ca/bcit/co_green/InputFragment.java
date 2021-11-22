@@ -2,19 +2,18 @@ package ca.bcit.co_green;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -27,10 +26,12 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
@@ -41,10 +42,9 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import ca.bcit.co_green.ranking.RankingRecyclerAdapter;
 
 public class InputFragment extends Fragment {
     EditText edtDriveDistance;
@@ -52,7 +52,8 @@ public class InputFragment extends Fragment {
     Button button;
     DatabaseReference databaseInput;
     FirebaseUser user;
-    private static final String EMISSION_URL = "https://beta2.api.climatiq.io/estimate";
+    private static final String DRIVING_EMISSION_ENDPOINT = "https://beta2.api.climatiq.io/estimate";
+    private static final String ELEC_EMISSION_ENDPOINT = "https://beta2.api.climatiq.io/estimate";
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -72,32 +73,21 @@ public class InputFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateEmission();
-                addInput();
+                buildRequestDriving();
+                buildRequestElec();
             }
         });
 
         return view;
     }
 
-    private void addInput() {
-        String driveDistance = edtDriveDistance.getText().toString().trim();
-        String electUsed = edtElecUsed.getText().toString().trim();
+    private void updateToDB(String reportID, CO2 co2Report){
+        // Merge co2 Report
+    }
 
-        if (TextUtils.isEmpty(driveDistance)) {
-            Toast.makeText(getActivity(), "Must enter some value.", Toast.LENGTH_LONG).show();
-        }
-
-        if (TextUtils.isEmpty(electUsed)) {
-            Toast.makeText(getActivity(), "Must enter some value.", Toast.LENGTH_LONG).show();
-        }
-
+    private void insertToDB(CO2 co2Report){
         String id = databaseInput.push().getKey();
-        String userId = user.getUid();
-        CO2 co2 = new CO2(userId, driveDistance, electUsed);
-
-        Task setValueTask = databaseInput.child(id).setValue(co2);
-
+        Task setValueTask = databaseInput.child(id).setValue(co2Report);
         setValueTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
@@ -108,14 +98,76 @@ public class InputFragment extends Fragment {
         });
     }
 
-    public void calculateEmission() {
-        // Get values
-        TextView distanceDrivenTV = getView().findViewById(R.id.edtDriveDistance);
-        String distanceDrivenStr = distanceDrivenTV.getText().toString();
-        if (distanceDrivenStr.isEmpty()) distanceDrivenStr = "0";
+    private void writeToDB(Map<String, String> co2ResultPair) {
+
+        // Find Users report for today
+        databaseInput
+                .orderByChild("id")
+                .equalTo(user.getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()) {
+                    ArrayList<CO2> userReports = new ArrayList<>();
+                    final String[] reportId = {""};
+                    task.getResult().getChildren().forEach(child->{
+
+                        CO2 tempReport = child.getValue(CO2.class);
+                        if(DateUtils.isToday(tempReport.getTimestamp().getTime())) {
+                            reportId[0] = child.getKey();
+                            userReports.add(tempReport);
+                        }
+                    });
+
+                    if(userReports.size()>0){
+                        // Update
+                        updateToDB(reportId[0], userReports.get(0));
+                    }else{
+                        // Insert
+                        insertToDB(userReports.get(0));
+                    }
+                }
+            }
+        });
+    }
+
+    public void buildRequestElec(){
+        String electUsed = edtElecUsed.getText().toString().trim();
+        if (TextUtils.isEmpty(electUsed)) {
+            Toast.makeText(getActivity(), "Must enter some value.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         // Convert to body value
-        double distanceDriven = Double.parseDouble(distanceDrivenStr);
+        double elec = Double.parseDouble(electUsed);
+
+        // Build API request body
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("emission_factor", "electricity-energy_source_coal_fired_plant");
+            JSONObject postDataPAram = new JSONObject();
+            postDataPAram.put("energy", elec);
+            postDataPAram.put("energy_unit", "kWh");
+            postData.put("parameters", postDataPAram);
+
+            callAPI(postData, ELEC_EMISSION_ENDPOINT);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void buildRequestDriving() {
+        // Get values
+        String driveDistance = edtDriveDistance.getText().toString().trim();
+        if (TextUtils.isEmpty(driveDistance)) {
+            Toast.makeText(getActivity(), "Must enter some value.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Convert to body value
+        double distanceDriven = Double.parseDouble(driveDistance);
 
         // Build API request body
         JSONObject postData = new JSONObject();
@@ -126,26 +178,25 @@ public class InputFragment extends Fragment {
             postDataPAram.put("volume_unit", "l");
             postData.put("parameters", postDataPAram);
 
-            callAPI(postData);
+            callAPI(postData, DRIVING_EMISSION_ENDPOINT);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void callAPI(JSONObject postJsonObj) {
+    public void callAPI(JSONObject postJsonObj, String apiEndpoint) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-            String URL = EMISSION_URL;
+            String URL = apiEndpoint;
             JSONObject jsonBody = postJsonObj;
 
             final String token = "bearer " + getResources().getString(R.string.TOKEN);
             final String requestBody = jsonBody.toString();
-
+            String endpointResponse = "";
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    System.out.println(response);
                     handleSuccessResult(response);
                 }
             }, new Response.ErrorListener() {
@@ -200,11 +251,13 @@ public class InputFragment extends Fragment {
         // Parse response
         Gson gson = new Gson();
         JsonObject convertedObject = gson.fromJson(response, JsonObject.class);
-        String result = convertedObject.get("co2e").getAsString();
+        String co2Result = "";
+        if(convertedObject != null && convertedObject.get("co2e") != null){
+            co2Result = convertedObject.get("co2e").getAsString();
+        }
 
-        // Display CO2 result as text
-        TextView resultText = getActivity().findViewById(R.id.txtResult);
-        resultText.setText(result);
+        Map<String, String> co2ResultPair = new HashMap<>();
+        writeToDB(co2ResultPair);
     }
 
 }
