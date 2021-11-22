@@ -1,4 +1,4 @@
-package ca.bcit.co_green;
+package ca.bcit.co_green.home;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,12 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,26 +32,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import ca.bcit.co_green.CO2;
+import ca.bcit.co_green.R;
+import ca.bcit.co_green.User;
+import ca.bcit.co_green.ranking.RankingRecyclerAdapter;
+
 public class HomeFragment extends Fragment {
     private PieChart pieChart;
     private FirebaseAuth fAuth;
     private TextView nameText;
+    private RecyclerView recyclerView;
+    private HomeRecyclerAdapter recyclerAdapter;
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         pieChart = view.findViewById(R.id.home_pieChart);
         fAuth = FirebaseAuth.getInstance();
         nameText = view.findViewById(R.id.home_username);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.home_recyclerView);
+        StaggeredGridLayoutManager lm = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(lm);
+        recyclerAdapter = new HomeRecyclerAdapter(getContext(), new ArrayList<CO2>());
+        recyclerView.setAdapter(recyclerAdapter);
+
         getMyInfo((userName)->{
             nameText.setText(userName);
         });
         getMyReports((reports)->{
-            Log.d("size", "" + reports.size());
-            Log.d("last", reports.get(reports.size()-1).getDriveDistance());
-
             Map<String, Integer> typeAmountMap = new HashMap<>();
             for(CO2 report : reports) {
-                typeAmountMap.put("Electricity", typeAmountMap.get("Electricity") == null?0:typeAmountMap.get("Electricity") + Integer.parseInt(report.elecUsed));
-                typeAmountMap.put("Drive", typeAmountMap.get("Drive") == null?0:typeAmountMap.get("Drive") + Integer.parseInt(report.driveDistance));
+                typeAmountMap.put("Electricity", typeAmountMap.get("Electricity") == null?0:typeAmountMap.get("Electricity") + Integer.parseInt(report.getElecUsed()));
+                typeAmountMap.put("Drive", typeAmountMap.get("Drive") == null?0:typeAmountMap.get("Drive") + Integer.parseInt(report.getDriveDistance()));
+            }
+            recyclerAdapter.updateData(reports);
+            if (reports.isEmpty()) {
+                view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+            } else {
+                view.findViewById(R.id.empty_view).setVisibility(View.GONE);
             }
             initPieChart();
             showPieChart(typeAmountMap);
@@ -87,7 +104,7 @@ public class HomeFragment extends Fragment {
         PieData pieData = new PieData(pieDataSet);
         pieData.setDrawValues(true);
 
-        pieChart.setData(pieData);
+        pieChart.setData(pieDataSet.getEntryCount() == 0?null:pieData);
         pieChart.invalidate();
     }
 

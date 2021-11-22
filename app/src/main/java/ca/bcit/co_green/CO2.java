@@ -1,9 +1,12 @@
 package ca.bcit.co_green;
 
+import java.util.Date;
+
 public class CO2 {
     String id;
     String driveDistance;
     String elecUsed;
+    Date timestamp;
     float co2;
 
     public CO2(){};
@@ -11,6 +14,7 @@ public class CO2 {
         this.id = id;
         this.driveDistance = driveDistance;
         this.elecUsed = elecUsed;
+        timestamp = new Date();
     }
     public String getId(){
         return id;
@@ -29,6 +33,14 @@ public class CO2 {
     }
     public void setElecUsed(){
         this.elecUsed = elecUsed;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public float getCo2() {

@@ -12,6 +12,7 @@ import android.view.View;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import ca.bcit.co_green.home.HomeFragment;
 import ca.bcit.co_green.ranking.RankingFragment;
 
 public class MainActivity extends AppCompatActivity {
