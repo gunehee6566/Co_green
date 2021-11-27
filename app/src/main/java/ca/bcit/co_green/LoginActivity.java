@@ -2,6 +2,7 @@ package ca.bcit.co_green;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,11 +16,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
+    TabLayout tabLayout;
+    ViewPager viewPager;
+    float v = 0;
     EditText editEmail;
     EditText editPassword;
     ProgressBar progressBar;
@@ -33,9 +38,27 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.view_pager);
+
+        //making tab layout for login and signup
+        tabLayout.addTab(tabLayout.newTab().setText("Login"));
+        tabLayout.addTab(tabLayout.newTab().setText("Signup"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final LoginAdapter adapter = new LoginAdapter(getSupportFragmentManager(), this, tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setTranslationY(300);
+
+        tabLayout.setAlpha(v);
+
+        tabLayout.animate().translationY(0).alpha(1).setDuration(1000).setStartDelay(800).start();
+
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
-        progressBar = findViewById(R.id.progressBar);
+//        progressBar = findViewById(R.id.progressBar);
         btnLogin = findViewById(R.id.btnLogin);
         tvCreateNewAccount = findViewById(R.id.tvCreateNewAccount);
 

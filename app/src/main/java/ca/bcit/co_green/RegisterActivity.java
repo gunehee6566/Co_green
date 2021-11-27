@@ -33,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
 
         databaseInput = FirebaseDatabase.getInstance().getReference("user");
 
@@ -41,15 +41,15 @@ public class RegisterActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         btnRegister = findViewById(R.id.btnRegister);
-        tvLogin = findViewById(R.id.tvLogin);
-        progressBar = findViewById(R.id.progressBar);
+//        tvLogin = findViewById(R.id.tvLogin);
+//        progressBar = findViewById(R.id.progressBar);
 
         fAuth = FirebaseAuth.getInstance();
 
-        if (fAuth.getCurrentUser() != null) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
-        }
+//        if (fAuth.getCurrentUser() != null) {
+//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//            finish();
+//        }
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
