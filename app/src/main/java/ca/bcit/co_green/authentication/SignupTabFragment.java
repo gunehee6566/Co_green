@@ -1,9 +1,11 @@
-package ca.bcit.co_green;
+package ca.bcit.co_green.authentication;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -11,7 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -21,36 +24,30 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import ca.bcit.co_green.authentication.LoginActivity;
+import ca.bcit.co_green.MainActivity;
+import ca.bcit.co_green.R;
+import ca.bcit.co_green.User;
 
-public class RegisterActivity extends AppCompatActivity {
+public class SignupTabFragment extends Fragment {
+
     EditText editName, editEmail, editPassword;
     Button btnRegister;
-    TextView tvLogin;
-    ProgressBar progressBar;
+    TextView tvCreateNewAccount;
     FirebaseAuth fAuth;
-
     DatabaseReference databaseInput;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.signup_tab_fragment, container, false);
 
         databaseInput = FirebaseDatabase.getInstance().getReference("user");
 
-        editName = findViewById(R.id.editName);
-        editEmail = findViewById(R.id.editEmail);
-        editPassword = findViewById(R.id.editPassword);
-        btnRegister = findViewById(R.id.btnRegister);
-//        tvLogin = findViewById(R.id.tvLogin);
-//        progressBar = findViewById(R.id.progressBar);
+        editName = root.findViewById(R.id.editName);
+        editEmail = root.findViewById(R.id.editEmail);
+        editPassword = root.findViewById(R.id.editPassword);
+        btnRegister = root.findViewById(R.id.btnRegister);
+        tvCreateNewAccount = root.findViewById(R.id.tvCreateNewAccount);
 
         fAuth = FirebaseAuth.getInstance();
-
-//        if (fAuth.getCurrentUser() != null) {
-//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//            finish();
-//        }
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,20 +76,17 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                progressBar.setVisibility(View.VISIBLE);
 
-// register user
+                // register user
                 fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             addUserName(task.getResult().getUser().getUid());
-                            Toast.makeText(RegisterActivity.this, "User Created", Toast.LENGTH_LONG).show();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-
+                            Toast.makeText(getContext(), "User Created", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(getContext(), MainActivity.class));
                         } else {
-                            Toast.makeText(RegisterActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "ERROR: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -100,20 +94,20 @@ public class RegisterActivity extends AppCompatActivity {
 
         });
 
-        tvLogin.setOnClickListener(new View.OnClickListener() {
+        tvCreateNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             }
         });
 
-
+        return root;
     }
+
     private void addUserName(String id){
         String userName = editName.getText().toString().trim();
         if(TextUtils.isEmpty(userName)){
-            Toast.makeText(this, "Must enter some value.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Must enter some value.", Toast.LENGTH_LONG).show();
         }
 
         User user = new User(id,userName);
@@ -122,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
         setValueTask.addOnSuccessListener(new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
-                Toast.makeText(RegisterActivity.this,"User Name added.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"User Name added.",Toast.LENGTH_LONG).show();
                 editName.setText("");
             }
         });
