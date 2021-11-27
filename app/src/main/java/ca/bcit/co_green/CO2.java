@@ -65,4 +65,16 @@ public class CO2 {
     public void setCo2Dictionary(Map<String, String> co2Dictionary) {
         this.co2Dictionary = co2Dictionary;
     }
+
+    @Override
+    public String toString() {
+        return "CO2{" +
+                "id='" + id + '\'' +
+                ", driveDistance='" + driveDistance + '\'' +
+                ", elecUsed='" + elecUsed + '\'' +
+                ", timestamp=" + timestamp +
+                ", co2=" + co2 +
+                ", co2Dictionary=" + co2Dictionary +
+                '}';
+    }
 }
