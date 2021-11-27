@@ -82,10 +82,20 @@ public class InputFragment extends Fragment {
     }
 
     private void updateToDB(String reportID, CO2 co2Report){
-        // Merge co2 Report
+
+        Task setValueTask = databaseInput.child(reportID).setValue(co2Report);
+        setValueTask.addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                Toast.makeText(getActivity(), "co2 input updated.", Toast.LENGTH_LONG).show();
+                edtDriveDistance.setText("");
+                edtElecUsed.setText("");
+            }
+        });
     }
 
     private void insertToDB(CO2 co2Report){
+
         String id = databaseInput.push().getKey();
         Task setValueTask = databaseInput.child(id).setValue(co2Report);
         setValueTask.addOnSuccessListener(new OnSuccessListener() {
@@ -99,6 +109,7 @@ public class InputFragment extends Fragment {
     }
 
     private void writeToDB(Map<String, String> co2ResultPair) {
+        if(co2ResultPair.size()==0) return;
 
         // Find Users report for today
         databaseInput
@@ -120,11 +131,35 @@ public class InputFragment extends Fragment {
                     });
 
                     if(userReports.size()>0){
-                        // Update
-                        updateToDB(reportId[0], userReports.get(0));
+                        // Report for user exist - Update
+                        CO2 todaysReport = userReports.get(0);
+
+                        for (Map.Entry<String, String> entry : co2ResultPair.entrySet()) {
+                            if (entry.getKey().equals("driveDistance")) {
+                                todaysReport.setDriveDistance(entry.getValue());
+                            }else if(entry.getKey().equals("elecUsed")){
+                                todaysReport.setElecUsed(entry.getValue());
+                            }
+                        }
+                        todaysReport.setTimestamp(new Date());
+                        todaysReport.setId(user.getUid());
+                        updateToDB(reportId[0], todaysReport);
                     }else{
-                        // Insert
-                        insertToDB(userReports.get(0));
+                        // Report does not exist - Insert
+                        CO2 newCo2 = new CO2();
+
+                        for (Map.Entry<String, String> entry : co2ResultPair.entrySet()) {
+                            if (entry.getKey().equals("driveDistance")) {
+                                newCo2.setDriveDistance(entry.getValue());
+                                newCo2.setElecUsed("0");
+                            }else if(entry.getKey().equals("elecUsed")){
+                                newCo2.setDriveDistance("0");
+                                newCo2.setElecUsed(entry.getValue());
+                            }
+                        }
+                        newCo2.setTimestamp(new Date());
+                        newCo2.setId(user.getUid());
+                        insertToDB(newCo2);
                     }
                 }
             }
@@ -251,12 +286,22 @@ public class InputFragment extends Fragment {
         // Parse response
         Gson gson = new Gson();
         JsonObject convertedObject = gson.fromJson(response, JsonObject.class);
+
         String co2Result = "";
+        String co2Type = "";
         if(convertedObject != null && convertedObject.get("co2e") != null){
             co2Result = convertedObject.get("co2e").getAsString();
+            co2Type = convertedObject.get("id").getAsString();
         }
 
         Map<String, String> co2ResultPair = new HashMap<>();
+
+        if (co2Type.contains("fuel")) {
+            co2ResultPair.put("driveDistance", co2Result);
+        }else if(co2Type.contains("elec")){
+            co2ResultPair.put("elecUsed", co2Result);
+        }
+
         writeToDB(co2ResultPair);
     }
 
