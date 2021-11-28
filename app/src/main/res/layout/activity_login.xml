@@ -17,8 +17,8 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginTop="60dp"
+        android:gravity="center"
         android:paddingBottom="50dp"
         android:text="@string/welcome"
         android:textColor="@color/black"
@@ -36,12 +36,12 @@
             android:id="@+id/view_pager"
             android:layout_width="411dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" >
+            android:layout_alignParentTop="true">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </androidx.viewpager.widget.ViewPager>
 
