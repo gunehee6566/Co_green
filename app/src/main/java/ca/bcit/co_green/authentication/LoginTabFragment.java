@@ -21,6 +21,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
+import ca.bcit.co_green.MainActivity;
 import ca.bcit.co_green.R;
 
 public class LoginTabFragment extends Fragment {
