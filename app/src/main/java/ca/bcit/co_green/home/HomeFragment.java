@@ -27,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,11 +61,30 @@ public class HomeFragment extends Fragment {
         });
         getMyReports((reports)->{
             Map<String, Integer> typeAmountMap = new HashMap<>();
+
+            //if some reports are from the same day, we want them to be shown in the same row.
+            ArrayList<CO2> reportSameDayCollected = new ArrayList<>();
+            boolean added = false;
             for(CO2 report : reports) {
-                typeAmountMap.put("Electricity", typeAmountMap.get("Electricity") == null?0:typeAmountMap.get("Electricity") + Integer.parseInt(report.getElecUsed()));
-                typeAmountMap.put("Drive", typeAmountMap.get("Drive") == null?0:typeAmountMap.get("Drive") + Integer.parseInt(report.getDriveDistance()));
+                for(CO2 collected : reportSameDayCollected) {
+                    SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+                    if(fmt.format(report.getTimestamp()).equals(fmt.format(collected.getTimestamp()))) {
+                        collected.setCo2(report.getCo2() + collected.getCo2());
+                        collected.setDriveDistance("" + (Float.parseFloat(report.getDriveDistance()) + Float.parseFloat(collected.getDriveDistance())));
+                        collected.setElecUsed("" + (Float.parseFloat(report.getElecUsed()) + Float.parseFloat(collected.getElecUsed())));
+                        added = true;
+                    }
+                }
+                if(!added) {
+                    reportSameDayCollected.add(report);
+                    added = false;
+                }
             }
-            recyclerAdapter.updateData(reports);
+            for(CO2 report : reports) {
+                typeAmountMap.put("Electricity", typeAmountMap.get("Electricity") == null?0:typeAmountMap.get("Electricity") + (int)Float.parseFloat(report.getElecUsed()));
+                typeAmountMap.put("Drive", typeAmountMap.get("Drive") == null?0:typeAmountMap.get("Drive") + (int)Float.parseFloat(report.getDriveDistance()));
+            }
+            recyclerAdapter.updateData(reportSameDayCollected);
             if (reports.isEmpty()) {
                 view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
             } else {

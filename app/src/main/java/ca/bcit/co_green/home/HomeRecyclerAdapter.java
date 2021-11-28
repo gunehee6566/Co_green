@@ -51,7 +51,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
         TextView drive = cardView.findViewById(R.id.home_item_drive);
         TextView elec = cardView.findViewById(R.id.home_item_elec);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE dd MMM hh:mm", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE dd MMM", Locale.ENGLISH);
         String formatted = dateFormat.format(report.getTimestamp());
         date.setText(formatted);
         drive.setText(String.valueOf(report.getDriveDistance()));

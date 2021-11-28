@@ -15,9 +15,6 @@
             android:name=".InputActivity"
             android:exported="true" />
         <activity
-            android:name=".RegisterActivity"
-            android:exported="true"/>
-        <activity
             android:name=".authentication.LoginActivity"
             android:exported="true">
             <intent-filter>
