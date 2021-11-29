@@ -4,11 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".ranking.RankingFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rank_recycler"/>
+        android:id="@+id/rank_recycler"
+        android:background="@drawable/savebutt_bg"
+/>
 
 </FrameLayout>
