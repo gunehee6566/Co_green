@@ -80,10 +80,15 @@ public class HomeFragment extends Fragment {
                     added = false;
                 }
             }
-            for(CO2 report : reports) {
-                typeAmountMap.put("Electricity", typeAmountMap.get("Electricity") == null?0:typeAmountMap.get("Electricity") + (int)Float.parseFloat(report.getElecUsed()));
-                typeAmountMap.put("Drive", typeAmountMap.get("Drive") == null?0:typeAmountMap.get("Drive") + (int)Float.parseFloat(report.getDriveDistance()));
+            for(CO2 report : reportSameDayCollected) {
+                Log.d("Electricity", "" + (int)Float.parseFloat(report.getElecUsed()));
+                Log.d("Drive", "" + (int)Float.parseFloat(report.getDriveDistance()));
+                typeAmountMap.put("Electricity", typeAmountMap.get("Electricity") == null?(int)Float.parseFloat(report.getElecUsed()):typeAmountMap.get("Electricity") + (int)Float.parseFloat(report.getElecUsed()));
+                typeAmountMap.put("Drive", typeAmountMap.get("Drive") == null?(int)Float.parseFloat(report.getDriveDistance()):typeAmountMap.get("Drive") + (int)Float.parseFloat(report.getDriveDistance()));
             }
+            Log.d("!!!!!!!!!!!!!!!!", "!!!!!!!!!!!!!");
+            Log.d("Electricity", "" + typeAmountMap.get("Electricity"));
+            Log.d("Drive", "" + typeAmountMap.get("Drive"));
             recyclerAdapter.updateData(reportSameDayCollected);
             if (reports.isEmpty()) {
                 view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
