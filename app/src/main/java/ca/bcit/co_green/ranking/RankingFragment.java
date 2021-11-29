@@ -53,6 +53,7 @@ public class RankingFragment extends Fragment {
                     ArrayList<CO2> reportForThisUser = reportsByUser.get(user.getId());
                     user.setCo2((reportForThisUser == null)?0f:reportForThisUser.stream().map(CO2::getCo2).reduce(0f, Float::sum));
                 });
+                userInfo.sort((r1,r2)-> (int) (r1.getCo2()-r2.getCo2()));
                 //at this point, userInfo has a list of users with ranked order.
                 recyclerAdapter.updateData(userInfo);
             });
