@@ -37,11 +37,11 @@ public class LoginActivity extends AppCompatActivity {
         /**
          * Uncomment this to auto login
          */
-//        fAuth = FirebaseAuth.getInstance();
-//        if (fAuth.getCurrentUser() != null) {
-//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//            finish();
-//        }
+        fAuth = FirebaseAuth.getInstance();
+        if (fAuth.getCurrentUser() != null) {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
+        }
     }
 
     public void setTab(int index) {

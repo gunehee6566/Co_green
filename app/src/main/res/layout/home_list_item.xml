@@ -65,7 +65,7 @@
                     android:textStyle="bold"
                     android:textSize="15sp"
                     android:layout_marginLeft="6dp"
-                    android:text="Km"
+                    android:text="Kg"
                     android:textColor="@color/black"/>
             </LinearLayout>
 
@@ -114,7 +114,7 @@
                     android:textStyle="bold"
                     android:textSize="15sp"
                     android:layout_marginLeft="6dp"
-                    android:text="KWh"
+                    android:text="Kg"
                     android:textColor="@color/black"/>
             </LinearLayout>
 
