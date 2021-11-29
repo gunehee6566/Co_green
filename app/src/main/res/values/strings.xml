@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Co-green</string>
 
+    <string name="co2_used">Your CO2 history</string>
+    <string name="ranking">Top Score</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="logout">Logout</string>
@@ -15,6 +17,7 @@
     <string name="transport_drive_unit">KM</string>
     <string name="lifestyle_electricity">Electricity used</string>
     <string name="lifestyle_electricity_unit">KWH</string>
+
 
     <string name="home">Home</string>
     <string name="add">Add</string>

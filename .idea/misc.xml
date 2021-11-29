@@ -9,6 +9,7 @@
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/drawable/elec_bg.xml" value="0.24583333333333332" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/drawable/ic_baseline_drive_eta_24.xml" value="0.24583333333333332" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/drawable/ic_baseline_electrical_services_24.xml" value="0.24583333333333332" />
+        <entry key="..\:/Users/16048/Co_green/app/src/main/res/drawable/ranking_bg.xml" value="0.2794871794871795" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/drawable/rounded_corner.xml" value="0.24583333333333332" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/drawable/savebutt_bg.xml" value="0.24583333333333332" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/drawable/view_bg.xml" value="0.24583333333333332" />
@@ -17,14 +18,12 @@
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/activity_main.xml" value="0.2296875" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/fragment_home.xml" value="0.2734375" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/fragment_input.xml" value="0.2734375" />
-        <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/fragment_ranking.xml" value="0.2296875" />
+        <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/fragment_ranking.xml" value="0.33" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/home_list_item.xml" value="0.2296875" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/login_tab_fragment.xml" value="0.2037037037037037" />
-        <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/rank_list_item.xml" value="0.2296875" />
+        <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/rank_list_item.xml" value="0.5" />
         <entry key="..\:/Users/16048/Co_green/app/src/main/res/layout/signup_tab_fragment.xml" value="0.2296875" />
-        <entry key="..\:/Users/reota/AndroidStudioProjects/Co_green/app/src/main/res/layout/activity_main.xml" value="0.115625" />
         <entry key="..\:/Users/reota/AndroidStudioProjects/Co_green/app/src/main/res/layout/fragment_input.xml" value="0.246875" />
-        <entry key="..\:/Users/reota/AndroidStudioProjects/Co_green/app/src/main/res/layout/rank_list_item.xml" value="0.115625" />
       </map>
     </option>
   </component>
