@@ -44,8 +44,6 @@
         android:layout_height="0dp"
         android:layout_below="@+id/home_top"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/rounded_corner"
-        android:backgroundTint="#E2FBEF"
         android:orientation="vertical">
         <TextView
             android:id="@+id/empty_view"
